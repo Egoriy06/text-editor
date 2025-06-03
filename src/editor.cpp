@@ -50,6 +50,5 @@ void TextEditor::highlightSyntax() {
         if (pos != std::string::npos) {
             line.replace(pos, 3, "\033[1;32mfor\033[0m"); // Зелёный
         }
-        // Аналогично для других ключевых слов...
     }
 }

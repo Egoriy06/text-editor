@@ -10,7 +10,8 @@ void showHelp() {
               << "  saveas <path> - Сохранить как...\n"
               << "  clear    - Очистить текст\n"
               << "  show     - Показать текст\n"
-              << "  exit     - Выход\n";
+              << "  exit     - Выход\n"
+              << "  add      - Добавить строку\n";
 }
 
 int main() {
@@ -28,6 +29,11 @@ int main() {
 
         if (command == "new") {
             editor.createNewFile();
+        } else if (command == "add") {
+            std::cout << "Введите строку для добавления: ";
+            std::string newLine;
+            std::getline(std::cin, newLine);
+            editor.addLine(newLine);        
         } else if (command.substr(0, 4) == "load") {
             std::string path = command.substr(5);
             editor.loadFile(path);
