@@ -1,0 +1,3 @@
+C:/plyusi/praktikac++/text_editor/text-editor/build/CMakeFiles/text_editor.dir
+C:/plyusi/praktikac++/text_editor/text-editor/build/CMakeFiles/edit_cache.dir
+C:/plyusi/praktikac++/text_editor/text-editor/build/CMakeFiles/rebuild_cache.dir
