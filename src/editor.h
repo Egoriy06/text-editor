@@ -3,12 +3,17 @@
 
 #include <vector>
 #include <string>
+#include <stack>
 
 class TextEditor {
 private:
     std::vector<std::string> lines;
     std::string currentFilePath;
     bool unsavedChanges;
+    std::stack<std::vector<std::string>> undoStack;
+    std::stack<std::vector<std::string>> redoStack;
+
+    void saveState();
 
 public:
     TextEditor();
@@ -26,13 +31,26 @@ public:
 
     // Вспомогательные функции
     const std::vector<std::string>& getLines() const;
-public:
+
     // Редактирование текста
     void addLine(const std::string& line);
     bool deleteLine(size_t lineNumber);
     bool replaceLine(size_t lineNumber, const std::string& newLine);
     std::vector<size_t> searchText(const std::string& keyword) const;
-    void highlightSyntax(); // Опционально
+    void highlightSyntax();
+
+    // Undo/Redo
+    bool undo();
+    bool redo();
+
+    // Статистика
+    size_t getWordCount() const;
+    size_t getCharCount() const;
+    size_t getLineCount() const;
+    void showStats() const;
+
+    // Фильтрация
+    void filterLines(const std::string& keyword);
 };
 
 #endif // TEXT_EDITOR_H
