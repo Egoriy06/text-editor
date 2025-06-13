@@ -1,0 +1,10 @@
+^C:\USERS\GSNEG\PROJECT4\TEXT-EDITOR\CMAKELISTS.TXT
+setlocal
+"C:\Users\gsneg\OneDrive\Рабочий стол\mingw64\bin\cmake.exe" -SC:/Users/gsneg/project4/text-editor -BC:/Users/gsneg/project4/text-editor/build --check-stamp-file C:/Users/gsneg/project4/text-editor/build/CMakeFiles/generate.stamp
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

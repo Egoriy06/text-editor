@@ -1,3 +1,6 @@
-C:/plyusi/praktikac++/text_editor/text-editor/build/CMakeFiles/text_editor.dir
-C:/plyusi/praktikac++/text_editor/text-editor/build/CMakeFiles/edit_cache.dir
-C:/plyusi/praktikac++/text_editor/text-editor/build/CMakeFiles/rebuild_cache.dir
+C:/Users/gsneg/project4/text-editor/build/CMakeFiles/text_editor.dir
+C:/Users/gsneg/project4/text-editor/build/CMakeFiles/docs.dir
+C:/Users/gsneg/project4/text-editor/build/CMakeFiles/tests.dir
+C:/Users/gsneg/project4/text-editor/build/CMakeFiles/RUN_TESTS.dir
+C:/Users/gsneg/project4/text-editor/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/gsneg/project4/text-editor/build/CMakeFiles/ZERO_CHECK.dir

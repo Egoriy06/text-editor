@@ -1,0 +1,10 @@
+^C:\USERS\GSNEG\PROJECT4\TEXT-EDITOR\BUILD\CMAKEFILES\CF355EACBDDCA8FC65A07C4808A12C44\GENERATE.STAMP.RULE
+setlocal
+"C:\Users\gsneg\OneDrive\Рабочий стол\mingw64\bin\cmake.exe" -SC:/Users/gsneg/project4/text-editor -BC:/Users/gsneg/project4/text-editor/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Users/gsneg/project4/text-editor/build/TextEditor.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

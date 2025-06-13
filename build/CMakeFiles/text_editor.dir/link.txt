@@ -1,3 +1,0 @@
-C:\plyusi\mingw64\bin\cmake.exe -E rm -f CMakeFiles\text_editor.dir/objects.a
-C:\plyusi\mingw64\bin\ar.exe qc CMakeFiles\text_editor.dir/objects.a @CMakeFiles\text_editor.dir\objects1.rsp
-C:\plyusi\mingw64\bin\c++.exe -Wl,--whole-archive CMakeFiles\text_editor.dir/objects.a -Wl,--no-whole-archive -o text_editor.exe -Wl,--out-implib,libtext_editor.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\text_editor.dir\linkLibs.rsp
