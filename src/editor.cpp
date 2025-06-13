@@ -4,6 +4,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <cstring>
 
 TextEditor::TextEditor() : unsavedChanges(false) {}
 
@@ -78,22 +79,43 @@ bool TextEditor::decryptFile(const std::string& password) {
         return false;
     }
 
+    std::vector<std::string> backup = lines;
     saveState();
     tempPassword = password;
 
     try {
+        // First pass - attempt decryption
         for (auto& line : lines) {
             std::string key = deriveKey(password, line.size());
             line = xorCrypt(line, key);
         }
-        unsavedChanges = true;
-        return true;
-    } catch (const std::exception& e) {
-        std::cerr << "Decryption error: " << e.what() << "\n";
-        undo();
+
+        // Second pass - verify result
+        bool allPrintable = true;
+        for (const auto& line : lines) {
+            for (char c : line) {
+                if (!std::isprint(static_cast<unsigned char>(c))) {
+                    allPrintable = false;
+                    break;
+                }
+            }
+            if (!allPrintable) break;
+        }
+
+        if (allPrintable) {
+            unsavedChanges = true;
+            return true;
+        }
+
+        // Restore backup if decryption failed
+        lines = backup;
+        return false;
+    } catch (...) {
+        lines = backup;
         return false;
     }
 }
+
 
 void TextEditor::addLine(const std::string& line) {
     saveState();
@@ -125,9 +147,21 @@ bool TextEditor::replaceLine(size_t lineNumber, const std::string& newLine) {
 
 std::vector<size_t> TextEditor::searchText(const std::string& keyword) const {
     std::vector<size_t> matches;
+    if (keyword.empty()) return matches;
+
     for (size_t i = 0; i < lines.size(); ++i) {
-        if (lines[i].find(keyword) != std::string::npos) {
-            matches.push_back(i + 1);
+        size_t pos = 0;
+        while ((pos = lines[i].find(keyword, pos)) != std::string::npos) {
+            // Check word boundaries
+            bool startBoundary = (pos == 0) || !std::isalnum(lines[i][pos-1]);
+            bool endBoundary = (pos + keyword.length() == lines[i].length()) ||
+                              !std::isalnum(lines[i][pos + keyword.length()]);
+
+            if (startBoundary && endBoundary) {
+                matches.push_back(i + 1);
+                break; // Only count one match per line
+            }
+            pos += keyword.length();
         }
     }
     return matches;
@@ -137,7 +171,12 @@ void TextEditor::highlightSyntax() {
     for (auto& line : lines) {
         size_t pos = line.find("for");
         if (pos != std::string::npos) {
-            line.replace(pos, 3, "\033[1;32mfor\033[0m");
+            // Check if it's a whole word
+            bool startOk = (pos == 0) || !std::isalnum(line[pos-1]);
+            bool endOk = (pos + 3 == line.length()) || !std::isalnum(line[pos + 3]);
+            if (startOk && endOk) {
+                line.replace(pos, 3, "\033[1;32mfor\033[0m");
+            }
         }
     }
 }
@@ -246,7 +285,9 @@ size_t TextEditor::getWordCount() const {
     for (const auto& line : lines) {
         std::istringstream iss(line);
         std::string word;
-        while (iss >> word) count++;
+        while (iss >> word) {
+            count++;
+        }
     }
     return count;
 }
@@ -254,7 +295,7 @@ size_t TextEditor::getWordCount() const {
 size_t TextEditor::getCharCount() const {
     size_t count = 0;
     for (const auto& line : lines) {
-        count += line.size();
+        count += line.length();
     }
     return count;
 }
