@@ -1,8 +1,12 @@
+
 #include "editor.h"
 #include <fstream>
 #include <iostream>
 #include <filesystem>
-
+#include <locale>
+/**
+ * @brief Создает новый файл (очищает текущее содержимое)
+ */
 void TextEditor::createNewFile() {
     saveState();
     lines.clear();
@@ -12,6 +16,11 @@ void TextEditor::createNewFile() {
     std::cout << "New file created\n";
 }
 
+/**
+ * @brief Загружает файл из указанного пути
+ * @param filePath Путь к файлу
+ * @return true при успешной загрузке, false при ошибке
+ */
 bool TextEditor::loadFile(const std::string& filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
@@ -34,6 +43,10 @@ bool TextEditor::loadFile(const std::string& filePath) {
     return true;
 }
 
+/**
+ * @brief Сохраняет файл по текущему пути
+ * @return true при успешном сохранении, false при ошибке
+ */
 bool TextEditor::saveToFile() {
     if (currentFilePath.empty()) {
         std::cerr << "Error: No file selected\n";
@@ -42,6 +55,11 @@ bool TextEditor::saveToFile() {
     return saveToFile(currentFilePath);
 }
 
+/**
+ * @brief Сохраняет файл по указанному пути
+ * @param filePath Путь для сохранения
+ * @return true при успешном сохранении, false при ошибке
+ */
 bool TextEditor::saveToFile(const std::string& filePath) {
     std::ofstream file(filePath);
     if (!file.is_open()) {
@@ -59,6 +77,9 @@ bool TextEditor::saveToFile(const std::string& filePath) {
     return true;
 }
 
+/**
+ * @brief Очищает текущий текст
+ */
 void TextEditor::clearText() {
     saveState();
     lines.clear();
@@ -67,6 +88,9 @@ void TextEditor::clearText() {
     std::cout << "Text cleared\n";
 }
 
+/**
+ * @brief Отображает текущий текст с нумерацией строк
+ */
 void TextEditor::displayText() const {
     if (lines.empty()) {
         std::cout << "(File is empty)\n";
@@ -77,10 +101,19 @@ void TextEditor::displayText() const {
     }
 }
 
+/**
+ * @brief Проверяет наличие несохраненных изменений
+ * @return true если есть несохраненные изменения
+ */
 bool TextEditor::hasUnsavedChanges() const {
     return unsavedChanges;
 }
 
+/**
+ * @brief Возвращает ссылку на текущие строки текста
+ * @return Константная ссылка на вектор строк
+ */
 const std::vector<std::string>& TextEditor::getLines() const {
     return lines;
 }
+

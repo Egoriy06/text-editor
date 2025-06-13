@@ -1,9 +1,13 @@
+
 #include <iostream>
 #include "editor.h"
 #include <windows.h>
 #include <sstream>
 #include <vector>
-
+#include <locale>
+/**
+ * @brief Отображает справочную информацию по командам
+ */
 void showHelp() {
     std::cout << "Commands:\n"
               << "  new             - Create new file\n"
@@ -33,6 +37,10 @@ void showHelp() {
               << "  help            - Show this help\n";
 }
 
+/**
+ * @brief Главная функция текстового редактора
+ * @return Код завершения программы
+ */
 int main() {
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
@@ -254,3 +262,4 @@ int main() {
 
     return 0;
 }
+

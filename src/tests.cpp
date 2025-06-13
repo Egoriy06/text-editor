@@ -1,9 +1,18 @@
+
 // test_editor.cpp
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 #include "editor.h"
 #include <fstream>
 #include <filesystem>
+#include <locale>
+/**
+ * @file tests.cpp
+ * @brief Модульные тесты для класса TextEditor
+ *
+ * Содержит набор тестов для проверки функциональности текстового редактора,
+ * включая операции с файлами, манипуляции с текстом и шифрование.
+ */
 
 TEST_SUITE("TextEditor Tests") {
     TEST_CASE("File Operations") {
@@ -240,3 +249,4 @@ TEST_SUITE("TextEditor Tests") {
         }
     }
 }
+

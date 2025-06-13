@@ -1,3 +1,4 @@
+
 #include "editor.h"
 #include <algorithm>
 #include <cctype>
@@ -5,13 +6,27 @@
 #include <sstream>
 #include <stdexcept>
 #include <cstring>
-
+#include <locale>
+/**
+ * @brief Конструктор по умолчанию
+ *
+ * Инициализирует редактор без несохраненных изменений.
+ */
 TextEditor::TextEditor() : unsavedChanges(false) {}
 
+/**
+ * @brief Деструктор
+ *
+ * Очищает временный пароль из памяти при уничтожении объекта.
+ */
 TextEditor::~TextEditor() {
     clearPassword();
 }
 
+/**
+ * @brief Безопасно очищает строку (заполняет нулями)
+ * @param str Ссылка на строку для очистки
+ */
 void TextEditor::secureClear(std::string& str) {
     if (!str.empty()) {
         memset(&str[0], 0, str.size());
@@ -19,10 +34,19 @@ void TextEditor::secureClear(std::string& str) {
     }
 }
 
+/**
+ * @brief Очищает временный пароль из памяти
+ */
 void TextEditor::clearPassword() {
     secureClear(tempPassword);
 }
 
+/**
+ * @brief Генерирует ключ шифрования на основе пароля
+ * @param password Пароль для шифрования
+ * @param length Требуемая длина ключа
+ * @return Сгенерированный ключ
+ */
 std::string TextEditor::deriveKey(const std::string& password, size_t length) const {
     std::string key;
     size_t pwdLen = password.length();
@@ -35,6 +59,12 @@ std::string TextEditor::deriveKey(const std::string& password, size_t length) co
     return key;
 }
 
+/**
+ * @brief Выполняет операцию XOR-шифрования
+ * @param data Данные для шифрования/расшифровки
+ * @param key Ключ шифрования
+ * @return Результат шифрования
+ */
 std::string TextEditor::xorCrypt(const std::string& data, const std::string& key) const {
     if (key.empty()) return data;
 
@@ -45,11 +75,19 @@ std::string TextEditor::xorCrypt(const std::string& data, const std::string& key
     return result;
 }
 
+/**
+ * @brief Сохраняет текущее состояние текста в стек отмены
+ */
 void TextEditor::saveState() {
     undoStack.push(lines);
     redoStack = std::stack<std::vector<std::string>>();
 }
 
+/**
+ * @brief Шифрует текущий текст с использованием пароля
+ * @param password Пароль для шифрования
+ * @return true при успешном шифровании, false при ошибке
+ */
 bool TextEditor::encryptFile(const std::string& password) {
     if (password.empty()) {
         std::cerr << "Error: Password cannot be empty\n";
@@ -73,6 +111,11 @@ bool TextEditor::encryptFile(const std::string& password) {
     }
 }
 
+/**
+ * @brief Расшифровывает текущий текст с использованием пароля
+ * @param password Пароль для расшифровки
+ * @return true при успешной расшифровке, false при ошибке
+ */
 bool TextEditor::decryptFile(const std::string& password) {
     if (password.empty()) {
         std::cerr << "Error: Password cannot be empty\n";
@@ -117,12 +160,21 @@ bool TextEditor::decryptFile(const std::string& password) {
 }
 
 
+/**
+ * @brief Добавляет новую строку в конец текста
+ * @param line Текст добавляемой строки
+ */
 void TextEditor::addLine(const std::string& line) {
     saveState();
     lines.push_back(line);
     unsavedChanges = true;
 }
 
+/**
+ * @brief Удаляет строку по номеру
+ * @param lineNumber Номер строки (начиная с 1)
+ * @return true при успешном удалении, false при неверном номере
+ */
 bool TextEditor::deleteLine(size_t lineNumber) {
     if (lineNumber < 1 || lineNumber > lines.size()) {
         std::cerr << "Error: Invalid line number\n";
@@ -134,6 +186,12 @@ bool TextEditor::deleteLine(size_t lineNumber) {
     return true;
 }
 
+/**
+ * @brief Заменяет содержимое строки
+ * @param lineNumber Номер строки (начиная с 1)
+ * @param newLine Новое содержимое строки
+ * @return true при успешной замене, false при неверном номере
+ */
 bool TextEditor::replaceLine(size_t lineNumber, const std::string& newLine) {
     if (lineNumber < 1 || lineNumber > lines.size()) {
         std::cerr << "Error: Invalid line number\n";
@@ -145,6 +203,11 @@ bool TextEditor::replaceLine(size_t lineNumber, const std::string& newLine) {
     return true;
 }
 
+/**
+ * @brief Ищет текст в строках
+ * @param keyword Искомый текст
+ * @return Вектор номеров строк, содержащих искомый текст
+ */
 std::vector<size_t> TextEditor::searchText(const std::string& keyword) const {
     std::vector<size_t> matches;
     if (keyword.empty()) return matches;
@@ -167,6 +230,9 @@ std::vector<size_t> TextEditor::searchText(const std::string& keyword) const {
     return matches;
 }
 
+/**
+ * @brief Подсвечивает синтаксис в тексте (экспериментальная функция)
+ */
 void TextEditor::highlightSyntax() {
     for (auto& line : lines) {
         size_t pos = line.find("for");
@@ -181,6 +247,11 @@ void TextEditor::highlightSyntax() {
     }
 }
 
+/**
+ * @brief Преобразует строку в верхний регистр
+ * @param str Исходная строка
+ * @return Строка в верхнем регистре
+ */
 std::string TextEditor::toUpper(const std::string& str) const {
     std::string result = str;
     std::transform(result.begin(), result.end(), result.begin(),
@@ -188,6 +259,11 @@ std::string TextEditor::toUpper(const std::string& str) const {
     return result;
 }
 
+/**
+ * @brief Преобразует строку в нижний регистр
+ * @param str Исходная строка
+ * @return Строка в нижнем регистре
+ */
 std::string TextEditor::toLower(const std::string& str) const {
     std::string result = str;
     std::transform(result.begin(), result.end(), result.begin(),
@@ -195,6 +271,11 @@ std::string TextEditor::toLower(const std::string& str) const {
     return result;
 }
 
+/**
+ * @brief Преобразует строку в регистр заголовка
+ * @param str Исходная строка
+ * @return Строка в регистре заголовка
+ */
 std::string TextEditor::toTitle(const std::string& str) const {
     std::string result = str;
     bool newWord = true;
@@ -211,6 +292,11 @@ std::string TextEditor::toTitle(const std::string& str) const {
     return result;
 }
 
+/**
+ * @brief Конвертирует строку в верхний регистр
+ * @param lineNumber Номер строки (начиная с 1)
+ * @return true при успешном изменении, false при неверном номере
+ */
 bool TextEditor::toUpperCase(size_t lineNumber) {
     if (lineNumber < 1 || lineNumber > lines.size()) {
         std::cerr << "Error: Invalid line number\n";
@@ -222,6 +308,11 @@ bool TextEditor::toUpperCase(size_t lineNumber) {
     return true;
 }
 
+/**
+ * @brief Конвертирует строку в нижний регистр
+ * @param lineNumber Номер строки (начиная с 1)
+ * @return true при успешном изменении, false при неверном номере
+ */
 bool TextEditor::toLowerCase(size_t lineNumber) {
     if (lineNumber < 1 || lineNumber > lines.size()) {
         std::cerr << "Error: Invalid line number\n";
@@ -233,6 +324,11 @@ bool TextEditor::toLowerCase(size_t lineNumber) {
     return true;
 }
 
+/**
+ * @brief Конвертирует строку в регистр заголовка
+ * @param lineNumber Номер строки (начиная с 1)
+ * @return true при успешном изменении, false при неверном номере
+ */
 bool TextEditor::toTitleCase(size_t lineNumber) {
     if (lineNumber < 1 || lineNumber > lines.size()) {
         std::cerr << "Error: Invalid line number\n";
@@ -244,6 +340,10 @@ bool TextEditor::toTitleCase(size_t lineNumber) {
     return true;
 }
 
+/**
+ * @brief Конвертирует все строки в указанный регистр
+ * @param caseType Тип регистра (1 - верхний, 2 - нижний, 3 - заголовочный)
+ */
 void TextEditor::changeAllLinesCase(int caseType) {
     saveState();
     for (auto& line : lines) {
@@ -256,6 +356,10 @@ void TextEditor::changeAllLinesCase(int caseType) {
     unsavedChanges = true;
 }
 
+/**
+ * @brief Отменяет последнее действие
+ * @return true при успешной отмене, false если нечего отменять
+ */
 bool TextEditor::undo() {
     if (undoStack.empty()) {
         std::cerr << "Nothing to undo\n";
@@ -268,6 +372,10 @@ bool TextEditor::undo() {
     return true;
 }
 
+/**
+ * @brief Повторяет отмененное действие
+ * @return true при успешном повторе, false если нечего повторять
+ */
 bool TextEditor::redo() {
     if (redoStack.empty()) {
         std::cerr << "Nothing to redo\n";
@@ -280,6 +388,10 @@ bool TextEditor::redo() {
     return true;
 }
 
+/**
+ * @brief Подсчитывает количество слов в тексте
+ * @return Общее количество слов
+ */
 size_t TextEditor::getWordCount() const {
     size_t count = 0;
     for (const auto& line : lines) {
@@ -292,6 +404,10 @@ size_t TextEditor::getWordCount() const {
     return count;
 }
 
+/**
+ * @brief Подсчитывает количество символов в тексте
+ * @return Общее количество символов
+ */
 size_t TextEditor::getCharCount() const {
     size_t count = 0;
     for (const auto& line : lines) {
@@ -300,10 +416,17 @@ size_t TextEditor::getCharCount() const {
     return count;
 }
 
+/**
+ * @brief Подсчитывает количество строк
+ * @return Количество строк
+ */
 size_t TextEditor::getLineCount() const {
     return lines.size();
 }
 
+/**
+ * @brief Выводит статистику по тексту (строки, слова, символы)
+ */
 void TextEditor::showStats() const {
     std::cout << "Statistics:\n"
               << "  Lines: " << getLineCount() << "\n"
@@ -311,6 +434,10 @@ void TextEditor::showStats() const {
               << "  Characters: " << getCharCount() << "\n";
 }
 
+/**
+ * @brief Фильтрует строки, оставляя только содержащие указанный текст
+ * @param keyword Текст для фильтрации
+ */
 void TextEditor::filterLines(const std::string& keyword) {
     saveState();
     std::vector<std::string> filteredLines;
@@ -322,3 +449,4 @@ void TextEditor::filterLines(const std::string& keyword) {
     lines = filteredLines;
     unsavedChanges = true;
 }
+
