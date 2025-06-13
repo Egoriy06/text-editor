@@ -1,36 +1,42 @@
 #include "editor.h"
 #include <fstream>
 #include <iostream>
+#include <filesystem>
 
 void TextEditor::createNewFile() {
+    saveState();
     lines.clear();
     currentFilePath.clear();
+    clearPassword();
     unsavedChanges = true;
-    std::cout << "Новый файл создан. Введите текст.\n";
+    std::cout << "New file created\n";
 }
 
 bool TextEditor::loadFile(const std::string& filePath) {
     std::ifstream file(filePath);
     if (!file.is_open()) {
-        std::cerr << "Ошибка: файл не найден или недоступен.\n";
+        std::cerr << "Error: Unable to open file\n";
         return false;
     }
 
+    saveState();
     lines.clear();
     std::string line;
+
     while (std::getline(file, line)) {
         lines.push_back(line);
     }
 
     currentFilePath = filePath;
+    clearPassword();
     unsavedChanges = false;
-    std::cout << "Файл загружен: " << filePath << "\n";
+    std::cout << "File loaded: " << filePath << "\n";
     return true;
 }
 
 bool TextEditor::saveToFile() {
     if (currentFilePath.empty()) {
-        std::cerr << "Ошибка: файл не выбран. Используйте 'save as'.\n";
+        std::cerr << "Error: No file selected\n";
         return false;
     }
     return saveToFile(currentFilePath);
@@ -39,7 +45,7 @@ bool TextEditor::saveToFile() {
 bool TextEditor::saveToFile(const std::string& filePath) {
     std::ofstream file(filePath);
     if (!file.is_open()) {
-        std::cerr << "Ошибка: невозможно сохранить файл.\n";
+        std::cerr << "Error: Unable to save file\n";
         return false;
     }
 
@@ -49,19 +55,21 @@ bool TextEditor::saveToFile(const std::string& filePath) {
 
     currentFilePath = filePath;
     unsavedChanges = false;
-    std::cout << "Файл сохранён: " << filePath << "\n";
+    std::cout << "File saved: " << filePath << "\n";
     return true;
 }
 
 void TextEditor::clearText() {
+    saveState();
     lines.clear();
+    clearPassword();
     unsavedChanges = true;
-    std::cout << "Текст очищен.\n";
+    std::cout << "Text cleared\n";
 }
 
 void TextEditor::displayText() const {
     if (lines.empty()) {
-        std::cout << "(Файл пуст)\n";
+        std::cout << "(File is empty)\n";
         return;
     }
     for (size_t i = 0; i < lines.size(); ++i) {

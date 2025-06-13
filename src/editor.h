@@ -4,6 +4,7 @@
 #include <vector>
 #include <string>
 #include <stack>
+#include <cstring>
 
 class TextEditor {
 private:
@@ -12,44 +13,52 @@ private:
     bool unsavedChanges;
     std::stack<std::vector<std::string>> undoStack;
     std::stack<std::vector<std::string>> redoStack;
+    std::string tempPassword;
 
     void saveState();
+    std::string deriveKey(const std::string& password, size_t length) const;
+    std::string xorCrypt(const std::string& data, const std::string& key) const;
+    void secureClear(std::string& str);
+    std::string toUpper(const std::string& str) const;
+    std::string toLower(const std::string& str) const;
+    std::string toTitle(const std::string& str) const;
 
 public:
     TextEditor();
+    ~TextEditor();
 
-    // Управление файлами
     void createNewFile();
     bool loadFile(const std::string& filePath);
     bool saveToFile();
     bool saveToFile(const std::string& filePath);
-
-    // Работа с текстом
     void clearText();
     void displayText() const;
     bool hasUnsavedChanges() const;
-
-    // Вспомогательные функции
     const std::vector<std::string>& getLines() const;
 
-    // Редактирование текста
+    bool encryptFile(const std::string& password);
+    bool decryptFile(const std::string& password);
+    void clearPassword();
+
     void addLine(const std::string& line);
     bool deleteLine(size_t lineNumber);
     bool replaceLine(size_t lineNumber, const std::string& newLine);
     std::vector<size_t> searchText(const std::string& keyword) const;
     void highlightSyntax();
 
-    // Undo/Redo
+    bool toUpperCase(size_t lineNumber);
+    bool toLowerCase(size_t lineNumber);
+    bool toTitleCase(size_t lineNumber);
+    void changeAllLinesCase(int caseType);
+
     bool undo();
     bool redo();
 
-    // Статистика
     size_t getWordCount() const;
     size_t getCharCount() const;
     size_t getLineCount() const;
     void showStats() const;
 
-    // Фильтрация
     void filterLines(const std::string& keyword);
 };
 

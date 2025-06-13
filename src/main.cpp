@@ -5,24 +5,32 @@
 #include <vector>
 
 void showHelp() {
-    std::cout << "Команды:\n"
-              << "  new             - Создать новый файл\n"
-              << "  load <path>     - Загрузить файл\n"
-              << "  save            - Сохранить в текущий файл\n"
-              << "  saveas <path>   - Сохранить как...\n"
-              << "  clear           - Очистить текст\n"
-              << "  show            - Показать текст\n"
-              << "  add             - Добавить строку\n"
-              << "  delete <num>    - Удалить строку по номеру\n"
-              << "  edit <num>      - Изменить конкретную строку\n"
-              << "  replace <num> <text> - Заменить строку\n"
-              << "  search <text>   - Поиск текста\n"
-              << "  filter <text>   - Оставить строки, содержащие текст\n"
-              << "  undo            - Отменить последнее действие\n"
-              << "  redo            - Вернуть отменённое действие\n"
-              << "  stats           - Показать статистику текста\n"
-              << "  exit            - Выход\n"
-              << "  help            - Показать эту справку\n";
+    std::cout << "Commands:\n"
+              << "  new             - Create new file\n"
+              << "  load <path>     - Load file\n"
+              << "  save            - Save to current file\n"
+              << "  saveas <path>   - Save as...\n"
+              << "  encrypt         - Encrypt file\n"
+              << "  decrypt         - Decrypt file\n"
+              << "  clear           - Clear text\n"
+              << "  show            - Show text\n"
+              << "  add             - Add line\n"
+              << "  delete <num>    - Delete line by number\n"
+              << "  edit <num>      - Edit specific line\n"
+              << "  replace <num> <text> - Replace line\n"
+              << "  search <text>   - Search text\n"
+              << "  filter <text>   - Keep lines containing text\n"
+              << "  upper <num>     - Convert line to uppercase\n"
+              << "  lower <num>     - Convert line to lowercase\n"
+              << "  title <num>     - Convert line to title case\n"
+              << "  allupper        - Convert all lines to uppercase\n"
+              << "  alllower        - Convert all lines to lowercase\n"
+              << "  alltitle        - Convert all lines to title case\n"
+              << "  undo            - Undo last action\n"
+              << "  redo            - Redo undone action\n"
+              << "  stats           - Show text statistics\n"
+              << "  exit            - Exit\n"
+              << "  help            - Show this help\n";
 }
 
 int main() {
@@ -31,7 +39,7 @@ int main() {
     TextEditor editor;
     std::string command;
 
-    std::cout << "Текстовый редактор (C++)\n";
+    std::cout << "Text Editor (C++) with Case Conversion\n";
     showHelp();
 
     while (true) {
@@ -47,7 +55,7 @@ int main() {
             editor.createNewFile();
         }
         else if (cmd == "add") {
-            std::cout << "Введите строку для добавления: ";
+            std::cout << "Enter line to add: ";
             std::string newLine;
             std::getline(std::cin, newLine);
             if (!newLine.empty()) {
@@ -58,27 +66,27 @@ int main() {
             std::string path;
             if (iss >> std::ws && std::getline(iss, path)) {
                 if (!editor.loadFile(path)) {
-                    std::cout << "Не удалось загрузить файл.\n";
+                    std::cout << "Failed to load file.\n";
                 }
             }
             else {
-                std::cout << "Ошибка: укажите путь к файлу.\n";
+                std::cout << "Error: Specify file path.\n";
             }
         }
         else if (cmd == "save") {
             if (!editor.saveToFile()) {
-                std::cout << "Не удалось сохранить файл.\n";
+                std::cout << "Failed to save file.\n";
             }
         }
         else if (cmd == "saveas") {
             std::string path;
             if (iss >> std::ws && std::getline(iss, path)) {
                 if (!editor.saveToFile(path)) {
-                    std::cout << "Не удалось сохранить файл.\n";
+                    std::cout << "Failed to save file.\n";
                 }
             }
             else {
-                std::cout << "Ошибка: укажите путь к файлу.\n";
+                std::cout << "Error: Specify file path.\n";
             }
         }
         else if (cmd == "clear") {
@@ -91,30 +99,30 @@ int main() {
             size_t lineNum;
             if (iss >> lineNum) {
                 if (!editor.deleteLine(lineNum)) {
-                    std::cout << "Ошибка: неверный номер строки.\n";
+                    std::cout << "Error: Invalid line number.\n";
                 }
             }
             else {
-                std::cout << "Ошибка: укажите номер строки.\n";
+                std::cout << "Error: Specify line number.\n";
             }
         }
         else if (cmd == "edit") {
             size_t lineNum;
             if (iss >> lineNum) {
                 if (lineNum >= 1 && lineNum <= editor.getLines().size()) {
-                    std::cout << "Текущий текст строки " << lineNum << ": " << editor.getLines()[lineNum-1] << "\n";
-                    std::cout << "Введите новый текст: ";
+                    std::cout << "Current text of line " << lineNum << ": " << editor.getLines()[lineNum-1] << "\n";
+                    std::cout << "Enter new text: ";
                     std::string newText;
                     std::getline(std::cin, newText);
                     if (!newText.empty()) {
                         editor.replaceLine(lineNum, newText);
                     }
                 } else {
-                    std::cout << "Ошибка: неверный номер строки.\n";
+                    std::cout << "Error: Invalid line number.\n";
                 }
             }
             else {
-                std::cout << "Ошибка: укажите номер строки.\n";
+                std::cout << "Error: Specify line number.\n";
             }
         }
         else if (cmd == "replace") {
@@ -122,11 +130,11 @@ int main() {
             std::string newText;
             if (iss >> lineNum && iss >> std::ws && std::getline(iss, newText)) {
                 if (!editor.replaceLine(lineNum, newText)) {
-                    std::cout << "Ошибка: неверный номер строки.\n";
+                    std::cout << "Error: Invalid line number.\n";
                 }
             }
             else {
-                std::cout << "Ошибка: укажите номер строки и новый текст.\n";
+                std::cout << "Error: Specify line number and new text.\n";
             }
         }
         else if (cmd == "search") {
@@ -134,10 +142,10 @@ int main() {
             if (iss >> std::ws && std::getline(iss, keyword)) {
                 auto results = editor.searchText(keyword);
                 if (results.empty()) {
-                    std::cout << "Текст не найден.\n";
+                    std::cout << "Text not found.\n";
                 }
                 else {
-                    std::cout << "Найдено в строках: ";
+                    std::cout << "Found in lines: ";
                     for (auto line : results) {
                         std::cout << line << " ";
                     }
@@ -145,7 +153,7 @@ int main() {
                 }
             }
             else {
-                std::cout << "Ошибка: укажите текст для поиска.\n";
+                std::cout << "Error: Specify search text.\n";
             }
         }
         else if (cmd == "filter") {
@@ -154,8 +162,68 @@ int main() {
                 editor.filterLines(keyword);
             }
             else {
-                std::cout << "Ошибка: укажите ключевое слово для фильтрации.\n";
+                std::cout << "Error: Specify filter keyword.\n";
             }
+        }
+        else if (cmd == "encrypt") {
+            std::cout << "Enter password: ";
+            std::string password;
+            std::getline(std::cin, password);
+            if (editor.encryptFile(password)) {
+                std::cout << "File encrypted. Remember to save changes!\n";
+            }
+        }
+        else if (cmd == "decrypt") {
+            std::cout << "Enter password: ";
+            std::string password;
+            std::getline(std::cin, password);
+            if (editor.decryptFile(password)) {
+                std::cout << "File decrypted.\n";
+            } else {
+                std::cout << "Failed to decrypt (wrong password?)\n";
+            }
+        }
+        else if (cmd == "upper") {
+            size_t lineNum;
+            if (iss >> lineNum) {
+                if (!editor.toUpperCase(lineNum)) {
+                    std::cout << "Error: Invalid line number.\n";
+                }
+            } else {
+                std::cout << "Error: Specify line number.\n";
+            }
+        }
+        else if (cmd == "lower") {
+            size_t lineNum;
+            if (iss >> lineNum) {
+                if (!editor.toLowerCase(lineNum)) {
+                    std::cout << "Error: Invalid line number.\n";
+                }
+            } else {
+                std::cout << "Error: Specify line number.\n";
+            }
+        }
+        else if (cmd == "title") {
+            size_t lineNum;
+            if (iss >> lineNum) {
+                if (!editor.toTitleCase(lineNum)) {
+                    std::cout << "Error: Invalid line number.\n";
+                }
+            } else {
+                std::cout << "Error: Specify line number.\n";
+            }
+        }
+        else if (cmd == "allupper") {
+            editor.changeAllLinesCase(1);
+            std::cout << "All lines converted to uppercase.\n";
+        }
+        else if (cmd == "alllower") {
+            editor.changeAllLinesCase(2);
+            std::cout << "All lines converted to lowercase.\n";
+        }
+        else if (cmd == "alltitle") {
+            editor.changeAllLinesCase(3);
+            std::cout << "All lines converted to title case.\n";
         }
         else if (cmd == "undo") {
             editor.undo();
@@ -168,7 +236,7 @@ int main() {
         }
         else if (cmd == "exit") {
             if (editor.hasUnsavedChanges()) {
-                std::cout << "Есть несохранённые изменения. Выйти без сохранения? (y/n): ";
+                std::cout << "You have unsaved changes. Exit without saving? (y/n): ";
                 char choice;
                 std::cin >> choice;
                 std::cin.ignore();
@@ -180,7 +248,7 @@ int main() {
             showHelp();
         }
         else {
-            std::cout << "Неизвестная команда. Введите 'help' для списка команд.\n";
+            std::cout << "Unknown command. Type 'help' for command list.\n";
         }
     }
 
